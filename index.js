@@ -3,15 +3,9 @@ import bodyParser from "body-parser";
 import pg from "pg";
 import env from "dotenv";
 import bcrypt from "bcrypt";
-
-/*
-  -- packages for future use 
-
 import passport from "passport";
 import { Strategy } from "passport-local";
 import session from "express-session";
-
-*/
 
 const app = express();
 const port = 8080;
@@ -21,6 +15,17 @@ env.config();
 
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 const db = new pg.Client({
   user: process.env.PG_USER,
@@ -68,28 +73,50 @@ app.post("/register", async (req, res) => {
     res.send(`Error: ${error}`);
   }
 });
-app.post("/login", async (req, res) => {
-  const email = req.body.username;
-  const password = req.body.password;
-  try {
-    const result = await db.query(
-      "SELECT email, password FROM users WHERE email = $1",
-      [email]
-    );
+app.post(
+  "/login",
+  passport.authenticate("local", {
+    successRedirect: "/homePage",
+    failureRedirect: "/login",
+  })
+);
 
-    if (result.rows.length > 0) {
-      const realPassword = result.rows[0].password;
-      if (realPassword == password) {
-        res.render("homePage.ejs");
+passport.use(
+  new Strategy(async function verify(username, password, cb) {
+    try {
+      const result = await db.query("SELECT * FROM users WHERE email = $1 ", [
+        username,
+      ]);
+      if (result.rows.length > 0) {
+        const user = result.rows[0];
+        const storedHashedPassword = user.password;
+        bcrypt.compare(password, storedHashedPassword, (err, valid) => {
+          if (err) {
+            //Error with password check
+            console.error("Error comparing passwords:", err);
+            return cb(err);
+          } else {
+            if (valid) {
+              return cb(null, user);
+            } else {
+              return cb(null, false);
+            }
+          }
+        });
       } else {
-        res.send(`Incorrect password.`);
+        return cb("User not found");
       }
-    } else {
-      res.send("User not found");
+    } catch (err) {
+      console.log(err);
     }
-  } catch (error) {
-    res.send(`There is no that email address. Register first.`);
-  }
+  })
+);
+
+passport.serializeUser((user, cb) => {
+  cb(null, user);
+});
+passport.deserializeUser((user, cb) => {
+  cb(null, user);
 });
 
 app.listen(port, (req, res) => {
