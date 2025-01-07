@@ -5,6 +5,7 @@ import env from "dotenv";
 import bcrypt from "bcrypt";
 import passport from "passport";
 import { Strategy } from "passport-local";
+import GoogleStrategy from "passport-google-oauth2";
 import session from "express-session";
 
 const app = express();
@@ -45,6 +46,20 @@ app.get("/register", (req, res) => {
 app.get("/login", (req, res) => {
   res.render("login.ejs");
 });
+app.get(
+  "/auth/google",
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+  })
+);
+
+app.get(
+  "/auth/google/callback",
+  passport.authenticate("google", {
+    successRedirect: "/homePage",
+    failureRedirect: "/login",
+  })
+);
 
 app.post("/register", async (req, res) => {
   const email = req.body.username;
@@ -65,7 +80,7 @@ app.post("/register", async (req, res) => {
             [email, hash]
           );
           console.log(result);
-          res.render("homePage.ejs");
+          res.redirect("homePage.ejs");
         }
       });
     }
@@ -110,6 +125,36 @@ passport.use(
       console.log(err);
     }
   })
+);
+
+passport.use(
+  "google",
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: "http://localhost:8080/auth/google/callback",
+      userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
+    },
+    async (accessToken, refreshToken, profile, cb) => {
+      try {
+        const result = await db.query("SELECT * FROM users WHERE email = $1", [
+          profile.email,
+        ]);
+        if (result.rows.length === 0) {
+          const newUser = await db.query(
+            "INSERT INTO users (email, google_id) VALUES ($1, $2)",
+            [profile.email, profile.id]
+          );
+          return cb(null, newUser.rows[0]);
+        } else {
+          return cb(null, result.rows[0]);
+        }
+      } catch (error) {
+        return cb(error);
+      }
+    }
+  )
 );
 
 passport.serializeUser((user, cb) => {
