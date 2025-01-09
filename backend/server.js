@@ -6,6 +6,7 @@ import bcrypt from "bcrypt";
 import passport from "passport";
 import { Strategy } from "passport-local";
 import GoogleStrategy from "passport-google-oauth2";
+import GitHubStrategy from "passport-github2";
 import session from "express-session";
 
 const app = express();
@@ -22,6 +23,11 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
+    cookie: {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 24 * 60 * 60 * 1000,
+    },
   })
 );
 
@@ -46,6 +52,15 @@ app.get("/register", (req, res) => {
 app.get("/login", (req, res) => {
   res.render("login.ejs");
 });
+app.get("/homePage", (req, res) => {
+  console.log(req.user);
+  if (req.isAuthenticated()) {
+    res.render("homePage.ejs");
+  } else {
+    res.redirect("/login");
+  }
+});
+
 app.get(
   "/auth/google",
   passport.authenticate("google", {
@@ -60,6 +75,20 @@ app.get(
     failureRedirect: "/login",
   })
 );
+app.get(
+  "/auth/github",
+  passport.authenticate("github", {
+    scope: ["user:email"],
+  })
+);
+
+app.get(
+  "/auth/github/callback",
+  passport.authenticate("github", {
+    successRedirect: "/homePage",
+    failureRedirect: "/login",
+  })
+);
 
 app.post("/register", async (req, res) => {
   const email = req.body.username;
@@ -69,23 +98,23 @@ app.post("/register", async (req, res) => {
       email,
     ]);
     if (result.rows.length > 0) {
-      res.send(`Email already exists.`);
+      res.status(400).send("Email already exists.");
     } else {
       bcrypt.hash(password, saltRounds, async (err, hash) => {
         if (err) {
-          console.log(err);
+          res.status(500).send("Error hashing password");
         } else {
           const result = await db.query(
             "INSERT INTO users (email, password) VALUES ($1, $2)",
             [email, hash]
           );
           console.log(result);
-          res.redirect("homePage.ejs");
+          res.redirect("/homePage");
         }
       });
     }
   } catch (error) {
-    res.send(`Error: ${error}`);
+    res.status(500).send("Internal server error. Please try again later.");
   }
 });
 app.post(
@@ -97,6 +126,7 @@ app.post(
 );
 
 passport.use(
+  "local",
   new Strategy(async function verify(username, password, cb) {
     try {
       const result = await db.query("SELECT * FROM users WHERE email = $1 ", [
@@ -144,6 +174,35 @@ passport.use(
         if (result.rows.length === 0) {
           const newUser = await db.query(
             "INSERT INTO users (email, google_id) VALUES ($1, $2)",
+            [profile.email, profile.id]
+          );
+          return cb(null, newUser.rows[0]);
+        } else {
+          return cb(null, result.rows[0]);
+        }
+      } catch (error) {
+        return cb(error);
+      }
+    }
+  )
+);
+
+passport.use(
+  "github",
+  new GitHubStrategy(
+    {
+      clientID: process.env.GITHUB_CLIENT_ID,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET,
+      callbackURL: "http://localhost:8080/auth/github/callback",
+    },
+    async (accessToken, refreshToken, profile, cb) => {
+      try {
+        const result = await db.query("SELECT * FROM users WHERE email = $1", [
+          profile.email,
+        ]);
+        if (result.rows.length === 0) {
+          const newUser = await db.query(
+            "INSERT INTO users (email, github_id) VALUES ($1, $2)",
             [profile.email, profile.id]
           );
           return cb(null, newUser.rows[0]);
