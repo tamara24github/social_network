@@ -31,6 +31,8 @@ This project is a simple social network platform that supports user registration
 - [Passport.js](https://www.passportjs.org/) - Authentication middleware
 - [Google OAuth2](https://www.npmjs.com/package/passport-google-oauth2) - Google authentication
 - [bcrypt.js](https://www.npmjs.com/package/bcryptjs) - Password hashing
+- [Express-session](https://www.npmjs.com/package/express-session) - Session management
+- [GitHub OAuth2](https://www.npmjs.com/package/passport-github2) - GitHub authentication
 
 ## Installation
 
@@ -63,6 +65,8 @@ cp .env.example .env
 
 GOOGLE_CLIENT_ID= your_google_client_id - (from the Google Developer Console)
 GOOGLE_CLIENT_SECRET= your_google_client_secret - (from the Google Developer Console)
+GITHUB_CLIENT_ID= your_github_client_id (from GitHub OAuth application)
+GITHUB_CLIENT_SECRET= your_github_client_secret (from GitHub OAuth application)
 SESSION_SECRET= your_session_secret
 PG_USER= your_db_user
 PG_HOST= localhost
