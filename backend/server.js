@@ -93,6 +93,7 @@ app.get(
 app.post("/register", async (req, res) => {
   const email = req.body.username;
   const password = req.body.password;
+  const name = req.body.name;
   try {
     const result = await db.query("SELECT email FROM users WHERE email = $1", [
       email,
@@ -105,8 +106,8 @@ app.post("/register", async (req, res) => {
           res.status(500).send("Error hashing password");
         } else {
           const result = await db.query(
-            "INSERT INTO users (email, password) VALUES ($1, $2)",
-            [email, hash]
+            "INSERT INTO users (email, password, name) VALUES ($1, $2, $3)",
+            [email, hash, name]
           );
           console.log(result);
           res.redirect("/homePage");
@@ -173,8 +174,8 @@ passport.use(
         ]);
         if (result.rows.length === 0) {
           const newUser = await db.query(
-            "INSERT INTO users (email, google_id) VALUES ($1, $2)",
-            [profile.email, profile.id]
+            "INSERT INTO users (email, google_id, name) VALUES ($1, $2, $3)",
+            [profile.email, profile.id, profile.displayName]
           );
           return cb(null, newUser.rows[0]);
         } else {
@@ -202,8 +203,8 @@ passport.use(
         ]);
         if (result.rows.length === 0) {
           const newUser = await db.query(
-            "INSERT INTO users (email, github_id) VALUES ($1, $2)",
-            [profile.email, profile.id]
+            "INSERT INTO users (email, github_id, name) VALUES ($1, $2, $3)",
+            [profile.email, profile.id, profile.displayName || profile.username]
           );
           return cb(null, newUser.rows[0]);
         } else {
