@@ -3,10 +3,15 @@ import AuthForm from "./AuthForm";
 import { registerUser } from "../../services/authAPI";
 
 const Register = () => {
-  const handleRegisterSubmit = (formData) => {
+  const handleRegisterSubmit = async (formData) => {
     console.log("Registering user with data:", formData);
     const { email, password, name } = formData;
-    registerUser(email, password, name);
+
+    try {
+      await registerUser(email, password, name);
+    } catch (error) {
+      console.log(`Error from register form: ${error}`);
+    }
   };
 
   return (
