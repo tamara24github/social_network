@@ -24,6 +24,7 @@ app.use(
 
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
 
 app.use(
   session({
@@ -101,34 +102,41 @@ app.post("/register", async (req, res) => {
   const email = req.body.username;
   const password = req.body.password;
   const name = req.body.name;
+  console.log(req.body);
+
   try {
-    const result = await db.query("SELECT email FROM users WHERE email = $1", [
+    const checkResult = await db.query("SELECT * FROM users WHERE email = $1", [
       email,
     ]);
-    if (result.rows.length > 0) {
-      res.status(400).send("Email already exists.");
+
+    if (checkResult.rows.length > 0) {
+      req.redirect("/login");
     } else {
       bcrypt.hash(password, saltRounds, async (err, hash) => {
         if (err) {
-          res.status(500).send("Error hashing password");
+          console.error("Error hashing password:", err);
         } else {
           const result = await db.query(
-            "INSERT INTO users (email, password, name) VALUES ($1, $2, $3)",
+            "INSERT INTO users (email, password, name) VALUES ($1, $2, $3) RETURNING *",
             [email, hash, name]
           );
-          console.log(result);
-          res.redirect("/homePage");
+          const user = result.rows[0];
+          req.login(user, (err) => {
+            console.log("success");
+            res.redirect("/");
+          });
         }
       });
     }
-  } catch (error) {
-    res.status(500).send("Internal server error. Please try again later.");
+  } catch (err) {
+    console.log(err);
   }
 });
+
 app.post(
   "/login",
   passport.authenticate("local", {
-    successRedirect: "/homePage",
+    successRedirect: "/",
     failureRedirect: "/login",
   })
 );
