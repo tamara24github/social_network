@@ -1,8 +1,8 @@
 import axios from "axios";
 
-const registerUser = async (email, password, name) => {
+export const registerUser = async (email, password, name) => {
   try {
-    const response = await axios.post("/api/register", {
+    const response = await axios.post("http://localhost:8080/api/register", {
       username: email,
       password,
       name,
@@ -13,9 +13,9 @@ const registerUser = async (email, password, name) => {
   }
 };
 
-const loginUser = async (email, password) => {
+export const loginUser = async (email, password) => {
   try {
-    const response = await axios.post("/api/login", {
+    const response = await axios.post("http://localhost:8080/api/login", {
       username: email,
       password,
     });
@@ -25,9 +25,9 @@ const loginUser = async (email, password) => {
   }
 };
 
-const checkAuth = async () => {
+export const checkAuth = async () => {
   try {
-    const response = await axios.get("/api/current_user");
+    const response = await axios.get("http://localhost:8080/api/current_user");
     console.log("Authenticated User:", response.data);
   } catch (error) {
     console.error("Not Authenticated:", error.response?.data || error);

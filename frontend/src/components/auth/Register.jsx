@@ -1,9 +1,12 @@
 import React from "react";
-import AuthForm from "./AuthForm"; // Import the reusable Form component
+import AuthForm from "./AuthForm";
+import { registerUser } from "../../services/authAPI";
 
 const Register = () => {
   const handleRegisterSubmit = (formData) => {
     console.log("Registering user with data:", formData);
+    const { email, password, name } = formData;
+    registerUser(email, password, name);
   };
 
   return (
