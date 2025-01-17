@@ -33,6 +33,7 @@ This project is a simple social network platform that supports user registration
 - [bcrypt.js](https://www.npmjs.com/package/bcryptjs) - Password hashing
 - [Express-session](https://www.npmjs.com/package/express-session) - Session management
 - [GitHub OAuth2](https://www.npmjs.com/package/passport-github2) - GitHub authentication
+- [CORS](https://www.npmjs.com/package/cors) - Cross-Origin Resource Sharing middleware
 
 ## Installation
 
