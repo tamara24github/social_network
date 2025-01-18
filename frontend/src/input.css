@@ -1,3 +1,101 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* General container styles */
+.ap-container {
+  background-image: url("../src/assets/images/pattern.svg");
+  background-repeat: repeat();
+  background-size: 160px 180px; /* Ensures it scales without distortion */
+  background-position: center; /* Centers the pattern */
+  height: 100vh; /* Full screen height */
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Keyframes for fade-in effect */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(50px); /* Starts slightly below */
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0); /* Moves to normal position */
+  }
+}
+
+/* Keyframes for the pulsing effect on the 'devPulse' span */
+@keyframes pulse {
+  0% {
+    transform: scale(1.5); /* Start slightly bigger */
+    opacity: 1;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.7),
+      0 0 20px rgba(0, 255, 255, 0.7); /* Subtle glow effect */
+  }
+  50% {
+    transform: scale(1.7); /* Increase size for a more noticeable pulse */
+    opacity: 0.7;
+    text-shadow: 0 0 12px rgba(255, 255, 255, 0.9),
+      0 0 30px rgba(0, 255, 255, 0.953); /* Stronger glow effect */
+  }
+  100% {
+    transform: scale(1.5); /* Return to original size */
+    opacity: 1;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.7),
+      0 0 20px rgba(0, 255, 255, 0.7); /* Subtle glow effect */
+  }
+}
+
+/* Apply fade-in to the h1 */
+.ap-heading h1 {
+  opacity: 0;
+  transform: translateY(50px);
+  animation: fadeIn 1.5s ease-out forwards;
+}
+
+/* Apply pulsing to the span inside h1 */
+.ap-heading h1 span {
+  animation: pulse 1.6s infinite ease-in-out;
+  color: #00ffff; /* Optional color for the text itself */
+}
+
+/* Apply fade-in for the h3 with a slight delay */
+.ap-heading h3 {
+  opacity: 0;
+  transform: translateY(50px);
+  animation: fadeIn 2s ease-out forwards;
+  animation-delay: 1.5s; /* Delay after h1 appears */
+}
+
+/* Apply staggered fade-in for buttons */
+.ap-container > div:nth-child(2) {
+  opacity: 0;
+  transform: translateY(50px);
+  animation: fadeIn 2s ease-out forwards;
+  animation-delay: 2s; /* Delay for 'Login' button */
+}
+
+.ap-container > div:nth-child(3) {
+  opacity: 0;
+  transform: translateY(50px);
+  animation: fadeIn 2s ease-out forwards;
+  animation-delay: 2.5s; /* Delay for 'Register' button */
+}
+
+.ap-container > div:nth-child(4) {
+  opacity: 0;
+  transform: translateY(50px);
+  animation: fadeIn 2s ease-out forwards;
+  animation-delay: 3s; /* Delay for 'Sign in with Google' */
+}
+
+.ap-container > div:nth-child(5) {
+  opacity: 0;
+  transform: translateY(50px);
+  animation: fadeIn 2s ease-out forwards;
+  animation-delay: 3.5s; /* Delay for 'Sign in with GitHub' */
+}
