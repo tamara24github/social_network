@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Input from "../common/Input";
 import Button from "../common/Button";
+import Label from "../common/Label";
 
 const AuthForm = ({ onSubmit, isLogin }) => {
   const [formData, setFormData] = useState({
@@ -23,37 +24,48 @@ const AuthForm = ({ onSubmit, isLogin }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="p-5">
       {!isLogin && (
-        <Input
-          inputType="text"
-          label="Name"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          required
-        />
+        <div>
+          <Label className="text-white">Name</Label>{" "}
+          <Input
+            inputType="text"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            required
+            className="w-full p-4 mb-4 rounded-md"
+          />
+        </div>
       )}
 
-      <Input
-        inputType="email"
-        label="Email"
-        name="email"
-        value={formData.email}
-        onChange={handleChange}
-        required
-      />
+      <div>
+        <Label className="text-white">Email</Label>{" "}
+        <Input
+          inputType="email"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+          required
+          className="w-full p-4 mb-4 rounded-md"
+        />
+      </div>
 
-      <Input
-        inputType="password"
-        label="Password"
-        name="password"
-        value={formData.password}
-        onChange={handleChange}
-        required
-      />
+      <div>
+        <Label className="text-white">Password</Label>{" "}
+        <Input
+          inputType="password"
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
+          required
+          className="w-full p-4 mb-6 rounded-md"
+        />
+      </div>
 
-      <Button type="submit">{isLogin ? "Login" : "Register"}</Button>
+      <Button type="submit" className="mt-8 mx-auto mb-0">
+        {isLogin ? "Login to devPulse" : "Join Now"}
+      </Button>
     </form>
   );
 };
