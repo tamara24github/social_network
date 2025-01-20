@@ -1,5 +1,8 @@
 import AuthForm from "./AuthForm";
 import { loginUser } from "../../services/authAPI";
+import FormHeading from "../common/FormHeading";
+import FormContainer from "../common/FormContainer";
+import AuthPageContainer from "../common/AuthPageContainer";
 
 const Login = () => {
   const handleLoginSubmit = async (formData) => {
@@ -13,10 +16,12 @@ const Login = () => {
   };
 
   return (
-    <div>
-      <h1>Login</h1>
-      <AuthForm onSubmit={handleLoginSubmit} isLogin={true} />
-    </div>
+    <AuthPageContainer>
+      <FormContainer>
+        <FormHeading>Login to devPulse</FormHeading>
+        <AuthForm onSubmit={handleLoginSubmit} isLogin={true} />
+      </FormContainer>
+    </AuthPageContainer>
   );
 };
 
