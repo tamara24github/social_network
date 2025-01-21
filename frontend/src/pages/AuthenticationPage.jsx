@@ -9,7 +9,7 @@ const AuthenticationPage = () => {
     <AuthPageContainer>
       <div className="ap-heading w-[80%] text-center text-white bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text shadow-glow mb-12">
         <h1 className="text-4xl sm:text-5xl font-bold animate-fadeIn">
-          Welcome to{" "}
+          Welcome to
           <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-green-400 animate-pulse">
             devPulse
           </span>
@@ -24,7 +24,7 @@ const AuthenticationPage = () => {
       <div className="w-full max-w-4xl flex flex-col items-center space-y-6">
         <div className="w-full flex justify-center items-center animate-fadeIn animate-delay-2s">
           <Link
-            to="/auth/github"
+            to="http://localhost:8080/auth/github"
             className="w-full flex justify-center items-center"
           >
             <Button>
@@ -36,7 +36,7 @@ const AuthenticationPage = () => {
 
         <div className="w-full flex justify-center items-center animate-fadeIn animate-delay-2.5s">
           <Link
-            to="/auth/google"
+            to="http://localhost:8080/auth/google"
             className="w-full flex justify-center items-center"
           >
             <Button>
@@ -46,6 +46,7 @@ const AuthenticationPage = () => {
           </Link>
         </div>
 
+        {/* Other Links for Login/Registration */}
         <div className="w-full flex flex-col justify-center items-center animate-fadeIn animate-delay-3s">
           <div className="text-center mb-1">
             <p className="text-white text-sm">
