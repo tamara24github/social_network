@@ -9,20 +9,20 @@ const AuthenticationPage = () => {
     <AuthPageContainer>
       <div className="ap-heading w-[80%] text-center text-white bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text shadow-glow mb-12">
         <h1 className="text-4xl sm:text-5xl font-bold animate-fadeIn">
-          Welcome to
+          Welcome to{" "}
           <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-green-400 animate-pulse">
             devPulse
-          </span>
+          </span>{" "}
           !
         </h1>
-        <h3 className="text-2xl sm:text-3xl font-semibold mt-4 animate-fadeIn animate-delay-1.5s">
+        <h3 className="text-2xl sm:text-3xl font-semibold mt-4 animate-fadeIn ">
           Choose how you'd like to get started and connect with fellow
           developers.
         </h3>
       </div>
 
       <div className="w-full max-w-4xl flex flex-col items-center space-y-6">
-        <div className="w-full flex justify-center items-center animate-fadeIn animate-delay-2s">
+        <div className="w-full flex justify-center items-center animate-fadeIn ">
           <Link
             to="http://localhost:8080/auth/github"
             className="w-full flex justify-center items-center"
@@ -34,7 +34,7 @@ const AuthenticationPage = () => {
           </Link>
         </div>
 
-        <div className="w-full flex justify-center items-center animate-fadeIn animate-delay-2.5s">
+        <div className="w-full flex justify-center items-center animate-fadeIn ">
           <Link
             to="http://localhost:8080/auth/google"
             className="w-full flex justify-center items-center"
@@ -47,7 +47,7 @@ const AuthenticationPage = () => {
         </div>
 
         {/* Other Links for Login/Registration */}
-        <div className="w-full flex flex-col justify-center items-center animate-fadeIn animate-delay-3s">
+        <div className="w-full flex flex-col justify-center items-center animate-fadeIn ">
           <div className="text-center mb-1">
             <p className="text-white text-sm">
               Already have an account? Log in to access your profile.
@@ -58,7 +58,7 @@ const AuthenticationPage = () => {
           </Link>
         </div>
 
-        <div className="w-full flex flex-col justify-center items-center animate-fadeIn animate-delay-3.5s">
+        <div className="w-full flex flex-col justify-center items-center animate-fadeIn ">
           <div className="text-center mb-1">
             <p className="text-white text-sm">
               New to devPulse? Sign up to join the community.
