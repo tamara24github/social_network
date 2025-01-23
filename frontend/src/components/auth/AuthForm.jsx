@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as Yup from "yup";
 import Input from "../common/Input";
@@ -6,35 +5,21 @@ import Button from "../common/Button";
 import Label from "../common/Label";
 
 const AuthForm = ({ onSubmit, isLogin }) => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
+  const { register, handleSubmit } = useForm();
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSubmit(formData);
+  const onHandleSubmit = (data) => {
+    onSubmit(data);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-5">
+    <form onSubmit={handleSubmit(onHandleSubmit)} className="p-5">
       {!isLogin && (
         <div>
           <Label className="text-white">Name</Label>{" "}
           <Input
+            autoComplete="off"
             inputType="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
+            {...register("name")}
             required
             className="w-full p-4 mb-4 rounded-md"
           />
@@ -44,10 +29,9 @@ const AuthForm = ({ onSubmit, isLogin }) => {
       <div>
         <Label className="text-white">Email</Label>{" "}
         <Input
+          autoComplete="off"
           inputType="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
+          {...register("email")}
           required
           className="w-full p-4 mb-4 rounded-md"
         />
@@ -56,10 +40,9 @@ const AuthForm = ({ onSubmit, isLogin }) => {
       <div>
         <Label className="text-white">Password</Label>{" "}
         <Input
+          autoComplete="off"
           inputType="password"
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
+          {...register("password")}
           required
           className="w-full p-4 mb-6 rounded-md"
         />

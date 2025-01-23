@@ -46,12 +46,9 @@ const AuthenticationPage = () => {
           </Link>
         </div>
 
-        {/* Other Links for Login/Registration */}
         <div className="w-full flex flex-col justify-center items-center animate-fadeIn ">
           <div className="text-center mb-1">
-            <p className="text-white text-sm">
-              Already have an account? Log in to access your profile.
-            </p>
+            <p className="text-white text-sm">Already have an account?</p>
           </div>
           <Link to="/login" className="w-full flex justify-center items-center">
             <Button>Log in to Your Account</Button>
@@ -60,9 +57,7 @@ const AuthenticationPage = () => {
 
         <div className="w-full flex flex-col justify-center items-center animate-fadeIn ">
           <div className="text-center mb-1">
-            <p className="text-white text-sm">
-              New to devPulse? Sign up to join the community.
-            </p>
+            <p className="text-white text-sm">New to devPulse?</p>
           </div>
           <Link
             to="/register"
