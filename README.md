@@ -19,6 +19,8 @@ This project is a simple social network platform that supports user registration
 - [React](https://react.dev/) - Framework
 - [React Router](https://reactrouter.com/en/main) - Routing
 - [Tailwindcss](https://tailwindcss.com/) - Style
+- [React Hook Form](https://www.npmjs.com/package/react-hook-form) - Form handling
+- [Yup](https://www.npmjs.com/package/yup) - Form validation
 
 - **Backend**:
 
