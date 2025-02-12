@@ -55,15 +55,15 @@ app.get("/", (req, res) => {
   res.render("index.ejs");
 });
 app.get("/register", (req, res) => {
-  res.render("register.ejs");
+  res.redirect("/profile");
 });
 app.get("/login", (req, res) => {
-  res.render("login.ejs");
+  res.redirect("/profile");
 });
-app.get("/homePage", (req, res) => {
+app.get("/profile", (req, res) => {
   console.log(req.user);
   if (req.isAuthenticated()) {
-    res.render("homePage.ejs");
+    res.redirect("/profile");
   } else {
     res.redirect("/login");
   }
@@ -79,7 +79,7 @@ app.get(
 app.get(
   "/auth/google/callback",
   passport.authenticate("google", {
-    successRedirect: "/homePage",
+    successRedirect: "/profile",
     failureRedirect: "/login",
   })
 );
@@ -93,7 +93,7 @@ app.get(
 app.get(
   "/auth/github/callback",
   passport.authenticate("github", {
-    successRedirect: "/homePage",
+    successRedirect: "/profile",
     failureRedirect: "/login",
   })
 );
@@ -109,11 +109,12 @@ app.post("/register", async (req, res) => {
     ]);
 
     if (checkResult.rows.length > 0) {
-      req.redirect("/login");
+      return res.status(400).json({ message: "User already exists" });
     } else {
       bcrypt.hash(password, saltRounds, async (err, hash) => {
         if (err) {
           console.error("Error hashing password:", err);
+          return res.status(500).json({ message: "Error hashing password" });
         } else {
           const result = await db.query(
             "INSERT INTO users (email, password, name) VALUES ($1, $2, $3) RETURNING *",
@@ -121,24 +122,42 @@ app.post("/register", async (req, res) => {
           );
           const user = result.rows[0];
           req.login(user, (err) => {
-            console.log("success");
-            res.redirect("/");
+            if (err) {
+              console.error("Login error:", err);
+              return res.status(500).json({ message: "Login failed" });
+            }
+            return res
+              .status(200)
+              .json({ message: "Registration successful", user });
           });
         }
       });
     }
   } catch (err) {
-    console.log(err);
+    console.log("Error in registration:", err);
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
-app.post(
-  "/login",
-  passport.authenticate("local", {
-    successRedirect: "/",
-    failureRedirect: "/login",
-  })
-);
+app.post("/login", (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
+    if (err) {
+      console.error("Authentication error:", err);
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
+    if (!user) {
+      return res.status(400).json({ message: "Invalid username or password" });
+    }
+    req.login(user, (err) => {
+      if (err) {
+        console.error("Login error:", err);
+        return res.status(500).json({ message: "Login failed" });
+      }
+
+      return res.status(200).json({ message: "Login successful", user });
+    });
+  })(req, res, next);
+});
 
 passport.use(
   "local",
@@ -147,19 +166,21 @@ passport.use(
       const result = await db.query("SELECT * FROM users WHERE email = $1 ", [
         username,
       ]);
+      if (result.rows.length === 0) {
+        return cb(null, false, { message: "User not found" });
+      }
       if (result.rows.length > 0) {
         const user = result.rows[0];
         const storedHashedPassword = user.password;
         bcrypt.compare(password, storedHashedPassword, (err, valid) => {
           if (err) {
-            //Error with password check
             console.error("Error comparing passwords:", err);
             return cb(err);
           } else {
             if (valid) {
               return cb(null, user);
             } else {
-              return cb(null, false);
+              return cb(null, false, { message: "Incorrect password" });
             }
           }
         });
@@ -167,7 +188,7 @@ passport.use(
         return cb("User not found");
       }
     } catch (err) {
-      console.log(err);
+      console.log("not correct data");
     }
   })
 );
