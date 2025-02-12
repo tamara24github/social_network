@@ -3,10 +3,6 @@ export default {
   content: ["./src/**/*.{html,js,jsx}"],
   theme: {
     extend: {
-      backgroundSize: {
-        "160x180": "160px 180px",
-      },
-
       keyframes: {
         fadeIn: {
           "0%": { opacity: "0", transform: "translateY(50px)" },
