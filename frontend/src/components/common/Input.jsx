@@ -4,6 +4,7 @@ const Input = ({
   value,
   onChange,
   required,
+  autoComplete,
   className,
   ...props
 }) => {
@@ -11,6 +12,7 @@ const Input = ({
     <div>
       {label && <label>{label}</label>}
       <input
+        autoComplete={autoComplete || "off"}
         type={inputType}
         value={value}
         onChange={onChange}
